@@ -8,7 +8,6 @@ urlpatterns = [
     path('shelters/', views.shelter_list_create),
     path('shelters/<int:pk>/', views.shelter_detail),
     
-
     path('users/', views.user_list_create),
     path('users/<int:pk>/', views.user_detail),
 
