@@ -2,26 +2,32 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
-# Create your models here.
-
 # ------------------------
 # Custom User Model
 # ------------------------
-class User(AbstractUser):
-    Role = models.CharField(max_length=20, default="admin")
-    CreatedAt = models.DateTimeField(auto_now_add=True)  # auto timestamp on creation
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = (
+        ('ADMIN', 'Admin'),
+        ('ADOPTER', 'Adopter'),
+    )
 
-    # Fix ManyToMany conflicts
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='ADOPTER')
+
+    def __str__(self):
+        return f"{self.username} ({self.role})"
+
+    # Fix ManyToMany conflicts for AbstractUser
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='core_user_set',
+        related_name='core_customuser_set',
         blank=True
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='core_user_permissions_set',
+        related_name='core_customuser_permissions_set',
         blank=True
     )
+
 
 # ------------------------
 # Shelter
@@ -34,6 +40,7 @@ class Shelter(models.Model):
 
     def __str__(self):
         return self.Name
+
 
 # ------------------------
 # Pet
@@ -51,14 +58,19 @@ class Pet(models.Model):
     def __str__(self):
         return self.Name
 
+
 # ------------------------
 # Adoption
 # ------------------------
 class Adoption(models.Model):
     Pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name='adoptions')
-    Adopter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='adoptions')
+    Adopter = models.ForeignKey('core.CustomUser', on_delete=models.CASCADE, related_name='adoptions')
     AdoptionDate = models.DateField(auto_now_add=True)
     Status = models.CharField(max_length=20, default="pending")
+
+    def __str__(self):
+        return f"Adoption: {self.Pet} by {self.Adopter}"
+
 
 # ------------------------
 # Veterinarian
@@ -71,6 +83,7 @@ class Veterinarian(models.Model):
     def __str__(self):
         return self.Name
 
+
 # ------------------------
 # VetAppointment
 # ------------------------
@@ -81,6 +94,10 @@ class VetAppointment(models.Model):
     Reason = models.CharField(max_length=200, default="Checkup")
     Notes = models.TextField(default="")
 
+    def __str__(self):
+        return f"Appointment: {self.Pet} with {self.Vet}"
+
+
 # ------------------------
 # MedicalRecord
 # ------------------------
@@ -90,11 +107,18 @@ class MedicalRecord(models.Model):
     Treatment = models.CharField(max_length=200, default="unknown")
     RecordDate = models.DateField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Medical Record for {self.Pet}"
+
+
 # ------------------------
 # Donation
 # ------------------------
 class Donation(models.Model):
     Shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, related_name='donations')
-    User = models.ForeignKey(User, on_delete=models.CASCADE, related_name='donations')
+    User = models.ForeignKey('core.CustomUser', on_delete=models.CASCADE, related_name='donations')
     Amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     DonationDate = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Donation {self.Amount} by {self.User}"
