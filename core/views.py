@@ -3,6 +3,8 @@ from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .models import *
+from core.models import CustomUser
+
 
 # Helper: parse JSON body
 def parse_request(request):
@@ -99,18 +101,18 @@ def shelter_detail(request, pk):
 @csrf_exempt
 def user_list_create(request):
     if request.method == 'GET':
-        users = list(User.objects.values('id', 'username', 'email', 'Role', 'CreatedAt'))
+        users = list(CustomUser.objects.values('id', 'username', 'email', 'Role', 'CreatedAt'))
         return JsonResponse(users, safe=False)
     elif request.method == 'POST':
         data = parse_request(request)
-        user = User.objects.create(**data)
+        user = CustomUser.objects.create(**data)
         return JsonResponse({'message': 'User created', 'id': user.id})
     return HttpResponseNotAllowed(['GET', 'POST'])
 
 
 @csrf_exempt
 def user_detail(request, pk):
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(CustomUser, pk=pk)
     if request.method == 'GET':
         return JsonResponse({'id': user.id, 'username': user.username, 'email': user.email, 'Role': user.Role})
     elif request.method == 'PUT':
@@ -148,9 +150,9 @@ def adoption_list_create(request):
         adopter_id = data.pop('Adopter', None)
         if adopter_id:
             try:
-                adopter = User.objects.get(pk=adopter_id)
+                adopter = CustomUser.objects.get(pk=adopter_id)
                 data['Adopter'] = adopter
-            except User.DoesNotExist:
+            except CustomUser.DoesNotExist:
                 return JsonResponse({'error': 'Adopter (User) not found'}, status=400)
 
         adoption = Adoption.objects.create(**data)
@@ -345,9 +347,9 @@ def donation_list_create(request):
         user_id = data.pop('User', None)
         if user_id:
             try:
-                user = User.objects.get(pk=user_id)
+                user = CustomUser.objects.get(pk=user_id)
                 data['User'] = user
-            except User.DoesNotExist:
+            except CustomUser.DoesNotExist:
                 return JsonResponse({'error': 'User not found'}, status=400)
 
         donation = Donation.objects.create(**data)

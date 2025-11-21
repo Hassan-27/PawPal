@@ -1,16 +1,28 @@
 from django.contrib import admin
 #My Imports
-from .models import Pet, Shelter, Donation, User, Adoption, VetAppointment, Veterinarian, MedicalRecord
+from .models import Pet, Shelter, Donation, CustomUser, Adoption, VetAppointment, Veterinarian, MedicalRecord
+from core.models import CustomUser
 
 # Register your models here.
 
 # ------------------------
 # User
 # ------------------------
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'email', 'Role', 'date_joined')
-    search_fields = ('username', 'email', 'Role')
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser
+
+@admin.register(CustomUser)
+# admin.site.register(CustomUser, CustomUserAdmin)
+class CustomUserAdmin(UserAdmin):
+    model = CustomUser
+    list_display = ('username', 'email', 'role', 'is_staff', 'is_active')
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('role',)}),
+    )
+
+# admin.site.register(CustomUser, CustomUserAdmin)
+
+
 
 
 # ------------------------
