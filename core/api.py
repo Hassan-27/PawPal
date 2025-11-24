@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from django.contrib.auth import authenticate, login
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import (
     CustomUser, Shelter, Pet, Adoption, Donation,
@@ -54,7 +55,7 @@ def register(request):
             username=username,
             email=email,
             password=password,
-            role="USER"  # default role
+            role="ADOPTER"  # default role
         )
 
         return JsonResponse({"message": "Registration successful"})
@@ -73,11 +74,17 @@ def user_login(request):
         if user is None:
             return JsonResponse({"error": "Invalid username or password"}, status=400)
 
+        # Create JWT tokens for the authenticated user
+        refresh = RefreshToken.for_user(user)
+
+        # Optionally also log in the user to create a session cookie
         login(request, user)
 
         return JsonResponse({
             "message": "Login successful",
-            "role": user.role
+            "role": user.role,
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
         })
 
 

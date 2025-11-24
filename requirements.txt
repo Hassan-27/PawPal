@@ -16,6 +16,7 @@ django-tailwind>=3.8.0
 
 # --- For Handling JSON & REST-like Endpoints (no DRF needed) ---
 djangorestframework>=3.15.0  # optional but handy for serializers; remove if staying pure Django
+djangorestframework-simplejwt>=5.2.0
 
 # --- Utility & Debugging ---
 django-extensions>=3.2.3

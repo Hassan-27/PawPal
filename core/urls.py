@@ -8,46 +8,46 @@ urlpatterns = [
     # -------------------------------
     # AUTHENTICATION
     # -------------------------------
-    path("api/register/", api.register),
-    path("api/login/", api.user_login),
+    path("register/", api.register),
+    path("login/", api.user_login),
 
     # -------------------------------
     # USER READ-ONLY ENDPOINTS
     # -------------------------------
-    path("api/shelters/", api.shelters_view),
-    path("api/shelters/<int:id>/", api.shelter_view),
+    path("shelters/", api.shelters_view),
+    path("shelters/<int:id>/", api.shelter_view),
 
-    path("api/pets/", api.pets),
-    path("api/pets/<int:id>/", api.pet_detail),
+    path("pets/", api.pets),
+    path("pets/<int:id>/", api.pet_detail),
 
-    path("api/vets/view/", api.vets_view),
+    path("vets/view/", api.vets_view),
 
     # -------------------------------
     # USER PERSONAL DATA ENDPOINTS
     # -------------------------------
-    path("api/adoptions/", api.adoptions),
-    path("api/donations/", api.donations),
+    path("adoptions/", api.adoptions),
+    path("donations/", api.donations),
 
-    path("api/appointments/my/", api.my_appointments),
-    path("api/medical-records/my/", api.my_medical_records),
+    path("appointments/my/", api.my_appointments),
+    path("medical-records/my/", api.my_medical_records),
 
     # -------------------------------
     # ADMIN-ONLY ENDPOINTS
     # -------------------------------
     # Shelters Admin
-    path("api/admin/shelters/", api.shelters_admin),
-    path("api/admin/shelters/<int:id>/", api.shelter_detail_admin),
+    path("adm/shelters/", api.shelters_admin),
+    path("adm/shelters/<int:id>/", api.shelter_detail_admin),
 
     # Pets Admin
-    path("api/admin/pets/", api.pets_admin),
-    path("api/admin/pets/<int:id>/", api.pet_detail_admin),
+    path("adm/pets/", api.pets_admin),
+    path("adm/pets/<int:id>/", api.pet_detail_admin),
 
     # Vets Admin
-    path("api/admin/vets/", api.vets),
+    path("adm/vets/", api.vets),
 
     # Appointments Admin
-    path("api/admin/appointments/", api.appointments),
+    path("adm/appointments/", api.appointments),
 
     # Medical Records Admin
-    path("api/admin/medical-records/", api.medical_records),
+    path("adm/medical-records/", api.medical_records),
 ]
